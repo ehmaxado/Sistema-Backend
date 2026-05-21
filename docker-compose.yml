@@ -1,0 +1,44 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agendamento-app
+    ports:
+      - "8000:8000"   # Laravel (API + views)
+      - "5173:5173"   # Vite (Vue.js com hot reload)
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - agendamento
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: agendamento-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: agendamento
+      POSTGRES_USER: agendamento_user
+      POSTGRES_PASSWORD: senha123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agendamento_user -d agendamento"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - agendamento
+
+volumes:
+  postgres_data:
+
+networks:
+  agendamento:
+    driver: bridge
