@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             ClienteSeeder::class,
-            // Dev2: ServicoSeeder::class,
+            ServicoSeeder::class,
             // Dev3: AgendamentoSeeder::class,
         ]);
     }
